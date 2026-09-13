@@ -1,0 +1,8 @@
+<Solution>
+  <Project Path="Productos.Tests/Productos.Tests.csproj" />
+  <Project Path="Productos.Web/Productos.Web.esproj">
+    <Build />
+    <Deploy Solution="Release|*" />
+  </Project>
+  <Project Path="Productos/Productos.csproj" />
+</Solution>

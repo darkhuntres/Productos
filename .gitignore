@@ -1,0 +1,8 @@
+.vs/
+**/bin/
+**/obj/
+Productos.Web/node_modules/
+Productos.Web/dist/
+*.user
+*.suo
+*.tsbuildinfo
