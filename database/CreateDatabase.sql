@@ -1,128 +1,132 @@
-﻿IF DB_ID(N'ProductosDb') IS NULL
+﻿IF DB_ID('ProductosDb') IS NULL
 BEGIN
-    CREATE DATABASE [ProductosDb];
-END;
+    CREATE DATABASE ProductosDb;
+END
 GO
 
-USE [ProductosDb];
+USE ProductosDb;
 GO
 
-IF OBJECT_ID(N'[__EFMigrationsHistory]') IS NULL
+
+-- Tipos de producto
+IF OBJECT_ID('TiposProducto', 'U') IS NULL
 BEGIN
-    CREATE TABLE [__EFMigrationsHistory] (
-        [MigrationId] nvarchar(150) NOT NULL,
-        [ProductVersion] nvarchar(32) NOT NULL,
-        CONSTRAINT [PK___EFMigrationsHistory] PRIMARY KEY ([MigrationId])
+    CREATE TABLE TiposProducto
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Nombre NVARCHAR(100) NOT NULL UNIQUE
     );
-END;
+END
 GO
 
-BEGIN TRANSACTION;
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
+
+-- Usuarios
+IF OBJECT_ID('Usuarios', 'U') IS NULL
 BEGIN
-    CREATE TABLE [TiposProducto] (
-        [Id] int NOT NULL IDENTITY,
-        [Nombre] nvarchar(100) NOT NULL,
-        CONSTRAINT [PK_TiposProducto] PRIMARY KEY ([Id])
+    CREATE TABLE Usuarios
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Email NVARCHAR(150) NOT NULL UNIQUE,
+        PasswordHash NVARCHAR(MAX) NOT NULL,
+        Rol NVARCHAR(20) NOT NULL
     );
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    CREATE TABLE [Usuarios] (
-        [Id] int NOT NULL IDENTITY,
-        [Email] nvarchar(150) NOT NULL,
-        [PasswordHash] nvarchar(max) NOT NULL,
-        [Rol] nvarchar(20) NOT NULL,
-        CONSTRAINT [PK_Usuarios] PRIMARY KEY ([Id])
-    );
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    CREATE TABLE [Productos] (
-        [Id] int NOT NULL IDENTITY,
-        [Nombre] nvarchar(150) NOT NULL,
-        [Descripcion] nvarchar(500) NULL,
-        [Precio] decimal(18,2) NOT NULL,
-        [Stock] int NOT NULL,
-        [TipoProductoId] int NOT NULL,
-        CONSTRAINT [PK_Productos] PRIMARY KEY ([Id]),
-        CONSTRAINT [FK_Productos_TiposProducto_TipoProductoId] FOREIGN KEY ([TipoProductoId]) REFERENCES [TiposProducto] ([Id]) ON DELETE NO ACTION
-    );
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Nombre') AND [object_id] = OBJECT_ID(N'[TiposProducto]'))
-        SET IDENTITY_INSERT [TiposProducto] ON;
-    EXEC(N'INSERT INTO [TiposProducto] ([Id], [Nombre])
-    VALUES (1, N''Electrónica''),
-    (2, N''Hogar''),
-    (3, N''Oficina'')');
-    IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Nombre') AND [object_id] = OBJECT_ID(N'[TiposProducto]'))
-        SET IDENTITY_INSERT [TiposProducto] OFF;
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Email', N'PasswordHash', N'Rol') AND [object_id] = OBJECT_ID(N'[Usuarios]'))
-        SET IDENTITY_INSERT [Usuarios] ON;
-    EXEC(N'INSERT INTO [Usuarios] ([Id], [Email], [PasswordHash], [Rol])
-    VALUES (1, N''admin@serfinsa.com'', N''$2a$11$OmBcs9.cT6hz7PpqAiXpcuFPYQwWHmdOH.nQMrEtZuXvUPJr6xbtO'', N''Admin''),
-    (2, N''user@serfinsa.com'', N''$2a$11$YyMqjEZzYKEMqf3C6zc.7uxXDs6OEgEZM/eNizxILR2zkWKxcYOZq'', N''User'')');
-    IF EXISTS (SELECT * FROM [sys].[identity_columns] WHERE [name] IN (N'Id', N'Email', N'PasswordHash', N'Rol') AND [object_id] = OBJECT_ID(N'[Usuarios]'))
-        SET IDENTITY_INSERT [Usuarios] OFF;
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    CREATE INDEX [IX_Productos_TipoProductoId] ON [Productos] ([TipoProductoId]);
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    CREATE UNIQUE INDEX [IX_TiposProducto_Nombre] ON [TiposProducto] ([Nombre]);
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    CREATE UNIQUE INDEX [IX_Usuarios_Email] ON [Usuarios] ([Email]);
-END;
-
-IF NOT EXISTS (
-    SELECT * FROM [__EFMigrationsHistory]
-    WHERE [MigrationId] = N'20260913014438_InicialCreate'
-)
-BEGIN
-    INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
-    VALUES (N'20260913014438_InicialCreate', N'10.0.12');
-END;
-
-COMMIT;
+END
 GO
+
+
+-- Productos
+IF OBJECT_ID('Productos', 'U') IS NULL
+BEGIN
+    CREATE TABLE Productos
+    (
+        Id INT IDENTITY(1,1) PRIMARY KEY,
+        Nombre NVARCHAR(150) NOT NULL,
+        Descripcion NVARCHAR(500) NULL,
+        Precio DECIMAL(18,2) NOT NULL,
+        Stock INT NOT NULL,
+        TipoProductoId INT NOT NULL,
+
+        CONSTRAINT FK_Productos_TiposProducto
+            FOREIGN KEY (TipoProductoId)
+            REFERENCES TiposProducto(Id)
+    );
+END
+GO
+
+
+-- Indice para la relacion con tipo de producto
+IF NOT EXISTS (
+    SELECT 1
+    FROM sys.indexes
+    WHERE name = 'IX_Productos_TipoProductoId'
+      AND object_id = OBJECT_ID('Productos')
+)
+BEGIN
+    CREATE INDEX IX_Productos_TipoProductoId
+        ON Productos(TipoProductoId);
+END
+GO
+
+
+-- Tipos de producto iniciales
+IF NOT EXISTS (SELECT 1 FROM TiposProducto)
+BEGIN
+    SET IDENTITY_INSERT TiposProducto ON;
+
+    INSERT INTO TiposProducto (Id, Nombre)
+    VALUES
+        (1, 'Electrónica'),
+        (2, 'Hogar'),
+        (3, 'Oficina');
+
+    SET IDENTITY_INSERT TiposProducto OFF;
+END
+GO
+
+
+-- Usuario administrador
+IF NOT EXISTS (
+    SELECT 1
+    FROM Usuarios
+    WHERE Email = 'admin@serfinsa.com'
+)
+BEGIN
+    SET IDENTITY_INSERT Usuarios ON;
+
+    INSERT INTO Usuarios (Id, Email, PasswordHash, Rol)
+    VALUES
+    (
+        1,
+        'admin@serfinsa.com',
+        '$2a$11$OmBcs9.cT6hz7PpqAiXpcuFPYQwWHmdOH.nQMrEtZuXvUPJr6xbtO',
+        'Admin'
+    );
+
+    SET IDENTITY_INSERT Usuarios OFF;
+END
+GO
+
+
+-- Usuario de solo lectura
+IF NOT EXISTS (
+    SELECT 1
+    FROM Usuarios
+    WHERE Email = 'user@serfinsa.com'
+)
+BEGIN
+    SET IDENTITY_INSERT Usuarios ON;
+
+    INSERT INTO Usuarios (Id, Email, PasswordHash, Rol)
+    VALUES
+    (
+        2,
+        'user@serfinsa.com',
+        '$2a$11$YyMqjEZzYKEMqf3C6zc.7uxXDs6OEgEZM/eNizxILR2zkWKxcYOZq',
+        'User'
+    );
+
+    SET IDENTITY_INSERT Usuarios OFF;
+END
+GO
+
 
