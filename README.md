@@ -1,6 +1,6 @@
 # Productos
 
-Aplicación full stack de login y gestión de productos. Backend en .NET 10 con autenticación JWT y autorización por roles, frontend en React consumiendo la API.
+Aplicación full stack para login y gestión de productos. El backend está desarrollado en .NET 10 y el frontend en React.
 
 ## Tecnologías
 
@@ -22,63 +22,70 @@ Aplicación full stack de login y gestión de productos. Backend en .NET 10 con 
 
 ## Base de datos
 
-El script `database/CreateDatabase.sql` crea la base `ProductosDb`, las tablas y los usuarios de prueba. Ejecutarlo contra tu instancia de SQL Server (por ejemplo desde SSMS o `sqlcmd`) antes de levantar el backend.
+Ejecutar `database/CreateDatabase.sql` en SQL Server antes de iniciar el backend.
 
-Si prefieres usar migraciones de EF Core en vez del script, desde `Productos/` corre `dotnet ef database update` (requiere `dotnet tool install --global dotnet-ef`).
+El script crea la base de datos `ProductosDb`, las tablas necesarias y los usuarios de prueba.
 
-La cadena de conexión está en `Productos/appsettings.json` (`ConnectionStrings:DefaultConnection`), apuntando a `localhost` con autenticación de Windows. Ajústala si tu SQL Server usa otra configuración.
+La cadena de conexión se encuentra en `Productos/appsettings.json`. Si es necesario, se puede modificar de acuerdo con la configuración local de SQL Server.
 
 ## Ejecutar el proyecto
 
-La forma más simple, desde la raíz:
+Desde la raíz del proyecto se puede ejecutar:
 
-```
+```powershell
 .\run-dev.ps1
 ```
 
-Levanta el backend y el frontend cada uno en su propia ventana de PowerShell.
+Esto inicia el backend y el frontend.
 
-También se pueden levantar por separado:
+También se pueden ejecutar por separado.
 
 Backend:
-```
+
+```bash
 cd Productos
 dotnet restore
 dotnet run
 ```
 
 Frontend:
-```
+
+```bash
 cd Productos.Web
 npm install
 npm run dev
 ```
 
-`npm install` solo hace falta la primera vez, o cuando cambian las dependencias del `package.json`.
+`npm install` solo es necesario la primera vez o cuando cambian las dependencias.
 
-Frontend: http://localhost:5173
-Backend: http://localhost:5080
+Frontend: `http://localhost:5173`
+
+Backend: `http://localhost:5080`
 
 ## Usuarios de prueba
 
-Administrador (CRUD completo de productos):
-```
+Administrador:
+
+```text
 admin@serfinsa.com
 Admin123!
 ```
 
-Usuario (solo lectura):
-```
+Usuario:
+
+```text
 user@serfinsa.com
 User123!
 ```
 
+El administrador puede realizar el CRUD de productos. El usuario tiene acceso de solo lectura.
+
 ## Pruebas
 
-Desde la raíz:
+Desde la raíz del proyecto:
 
-```
+```bash
 dotnet test
 ```
 
-Cubren login (credenciales válidas e inválidas), acceso sin token, restricción por rol y el CRUD de productos.
+Las pruebas incluyen autenticación, autorización por roles y operaciones CRUD de productos.
